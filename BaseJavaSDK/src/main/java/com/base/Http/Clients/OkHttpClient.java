@@ -34,10 +34,9 @@ public class OkHttpClient implements HttpClientInterface {
         // Send the Request and Fetch the Response
         try {
             okhttp3.Response okHttpResponse = client.newCall(okHttpRequest).execute();
+
             String body = okHttpResponse.body().string();
-
             Map<String, String> responseHeaders = this.getResponseHeaders(okHttpResponse);
-
             return new Response(request, responseHeaders, okHttpResponse.code(), body);
         } catch (Exception e) {
             throw new BaseHttpException(500, e.getMessage());

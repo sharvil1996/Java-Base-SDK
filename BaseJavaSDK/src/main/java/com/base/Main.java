@@ -1,10 +1,10 @@
 package com.base;
 
 import com.base.Exceptions.BaseHttpException;
+import com.base.Exceptions.PersonNotFound;
 import com.base.Http.Clients.HttpClientInterface;
 import com.base.Http.Clients.OkHttpClient;
-import com.base.Http.Request.Request;
-import com.base.Http.Response.Response;
+import com.base.Models.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,19 +12,17 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        Request request = new Request("https://swapi.co/api/people/1", Request.METHOD_GET);
-
+        HttpClientInterface httpClient = new OkHttpClient();
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        request.setHeaders(headers);
 
-        HttpClientInterface httpClient = new OkHttpClient();
-
+        BaseClient baseClient = new BaseClient(httpClient, headers);
+        Base base = new Base(baseClient);
         try {
-            Response response = httpClient.send(request);
-            System.out.println(response.getBody());
-        } catch (BaseHttpException e) {
-            e.printStackTrace();
+            User user = base.getUser("1");
+            System.out.println(user.getName());
+        } catch (PersonNotFound | BaseHttpException personNotFound) {
+            personNotFound.printStackTrace();
         }
     }
 
