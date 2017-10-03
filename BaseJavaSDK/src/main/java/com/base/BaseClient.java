@@ -36,9 +36,11 @@ public class BaseClient {
 
     public Response sendRequest(String endpoint, String method) throws BaseHttpException {
         String url = BaseClient.buildUrl(endpoint);
-
         Request request = makeRequest(url, method);
-        return this.httpClient.send(request);
+
+        Response response = this.httpClient.send(request);
+
+        return BaseExceptionHandler.handle(response);
     }
 
     protected static String buildUrl(String endpoint) {

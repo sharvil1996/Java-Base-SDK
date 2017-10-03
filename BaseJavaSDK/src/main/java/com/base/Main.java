@@ -1,6 +1,6 @@
 package com.base;
 
-import com.base.Exceptions.BaseHttpException;
+import com.base.Exceptions.BaseException;
 import com.base.Exceptions.PersonNotFound;
 import com.base.Http.Clients.HttpClientInterface;
 import com.base.Http.Clients.OkHttpClient;
@@ -15,14 +15,15 @@ public class Main {
         HttpClientInterface httpClient = new OkHttpClient();
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-
         BaseClient baseClient = new BaseClient(httpClient, headers);
         Base base = new Base(baseClient);
         try {
-            User user = base.getUser("1");
+            User user = base.getUser("BN");
             System.out.println(user.getName());
-        } catch (PersonNotFound | BaseHttpException personNotFound) {
-            personNotFound.printStackTrace();
+        } catch (PersonNotFound personNotFound) {
+            System.out.println("Person not found");
+        } catch (BaseException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,6 +1,8 @@
 package com.base;
 
+import com.base.Exceptions.BaseException;
 import com.base.Exceptions.BaseHttpException;
+import com.base.Exceptions.Http.NotFound;
 import com.base.Exceptions.PersonNotFound;
 import com.base.Http.Request.Request;
 import com.base.Http.Response.Response;
@@ -21,15 +23,20 @@ public class Base {
         this.client = client;
     }
 
-    public User getUser(String id) throws PersonNotFound, BaseHttpException {
-        Response response = this.client.sendRequest("/people/" + id, Request.METHOD_GET);
-        System.out.println(response.getBody());
-        return (User) makeModel(User.class, response.getBody());
-    }
-
     protected static Object makeModel(Type model, String jsonData) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         return gson.fromJson(jsonData, model);
+    }
+
+    public User getUser(String id) throws BaseException {
+        try {
+            Response response = this.client.sendRequest("/people/" + id, Request.METHOD_GET);
+            return (User) makeModel(User.class, response.getBody());
+        } catch (NotFound e) {
+            throw new PersonNotFound(id);
+        } catch (BaseHttpException e) {
+            throw new BaseException();
+        }
     }
 }
